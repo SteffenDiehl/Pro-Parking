@@ -6,13 +6,20 @@ from pygame.locals import *
 carspawntime = random.randint(5, 10)
 carsinlot = []
 start = time.time()
-carcolors =[]
+carcolours =[]
 extras = ['family', 'handycaped']
 carcounter = 1
 carsize = (100, 50)
-lotcount = 5
 price = 8 # Preis pro h in €
 simend = time.time() + 3* 60
+parkinglot = []
+
+reihen = 3
+spalten = 6
+for r in range(reihen):
+    for s in range(spalten):
+        parkinglot.append((r, s))
+lotcount = len(parkinglot)
 
 dpx = 600
 dpy = 400
@@ -22,6 +29,10 @@ grey = (170, 170, 170)
 screen = pygame.display.set_mode((dpx, dpy))
 pygame.display.set_caption('First drive')
 
+whitecar = pygame.image.load('whitecar.jpg')
+whitecar = pygame.transform.scale(whitecar, carsize)
+whitecar = pygame.transform.rotate(whitecar, 180)
+carcolours.append(whitecar)
 class cars:
     def __init__(self, cartimer, entrietime, exittime, lotnumber, colour, extra):
         self.cartimer = cartimer
@@ -35,9 +46,9 @@ def spawncar():
     timer = random.randint(20, 30) #(900, 43200)  # 15min - 12h in s
     starttime = time.time() # Zeitpunkt einfahrt
     endtime = starttime + timer # Zeitpunkt ausfahrt
-    carcolor = random.sample(carcolors, 1)  # zufällige autofarbe
+    carcolour = random.sample(carcolours, 1)  # zufällige autofarbe
     extra = situation()  # anspruch auf sonderparkplatz
-    car = cars(timer, starttime, endtime, 0, carcolor, extra)
+    car = cars(timer, starttime, endtime, 0, carcolour, extra)
     carsinlot.append(car)
     print(carsinlot)
     return
@@ -50,23 +61,28 @@ def situation():
         extra = 'none'
     return extra
 
-def parkcar(car, reihe, platz):
+def parkcar(car):
+    reihe , spalte = parkinglot[car.lotnumber]
     x = 0
     y = 0
-    screen.blit(car, (x, y))
+    thiscar = car.colour
+    screen.blit(thiscar, (x, y))
     x += 20
-    screen.blit(car, (x, y))
-    car = pygame.transform.rotate(car, -90)
+    screen.blit(car.colour, (x, y))
+    car = pygame.transform.rotate(car.carcolour, -90)
     for i in range(reihe):
         y += reihenabstand
-        screen.blit(car, (x, y))
-    car = pygame.transform.rotate(car, 90)
-    for i in range(platz):
+        screen.blit(car.colour, (x, y))
+        pygame.display.update()
+    car = pygame.transform.rotate(car.colour, 90)
+    for i in range(spalte):
         x += platzabstand
-        screen.blit(car, (x, y))
-    car = pygame.transform.rotate(car, -90)
+        screen.blit(car.colour, (x, y))
+        pygame.display.update()
+    car = pygame.transform.rotate(car.colour, -90)
     y += 5
-    screen.blit(car, (x, y))
+    screen.blit(car.colour, (x, y))
+    pygame.display.update()
 
 def getcarout(car):
     print('tbd')
@@ -81,12 +97,11 @@ def pay(car):
     print(f'You have to pay: {amounttopay}')
 
 
-whitecar = pygame.image.load('whitecar.jpg')
-whitecar = pygame.transform.scale(whitecar, carsize)
-whitecar = pygame.transform.rotate(whitecar, 180)
-carcolors.append(whitecar)
 
-while True:
+
+running = True
+while running == True:
+    screen.fill(grey)
     now = time.time()
     secounds = now - start
     if len(carsinlot) == lotcount:
@@ -97,6 +112,8 @@ while True:
             start = time.time()
             spawncar()
             carcounter += 1
+            car = carsinlot[-1]
+            parkcar(car)
     for car in carsinlot:
         print(car.cartimer, car.lotnumber, car.colour, car.extra)
         currenttime = time.time()
@@ -104,14 +121,6 @@ while True:
             getcarout(car)
     if simend == time.time():
         break
-
-
-
-
-running = True
-while running:
-    screen.fill(grey)
-    parkcar(whitecar, 3, 5)
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
