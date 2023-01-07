@@ -13,6 +13,7 @@ carsize = (100, 50)
 price = 8 # Preis pro h in €
 simend = time.time() + 3* 60
 parkinglot = []
+revenue = 0
 
 reihen = 3
 spalten = 6
@@ -46,7 +47,7 @@ def spawncar():
     timer = random.randint(20, 30) #(900, 43200)  # 15min - 12h in s
     starttime = time.time() # Zeitpunkt einfahrt
     endtime = starttime + timer # Zeitpunkt ausfahrt
-    carcolour = random.sample(carcolours, 1)  # zufällige autofarbe
+    carcolour = random.choice(carcolours)  # zufällige autofarbe
     extra = situation()  # anspruch auf sonderparkplatz
     car = cars(timer, starttime, endtime, 0, carcolour, extra)
     carsinlot.append(car)
@@ -68,36 +69,39 @@ def parkcar(car):
     thiscar = car.colour
     screen.blit(thiscar, (x, y))
     x += 20
-    screen.blit(car.colour, (x, y))
-    car = pygame.transform.rotate(car.carcolour, -90)
+    screen.blit(thiscar, (x, y))
+    thiscar = pygame.transform.rotate(thiscar, -90)
     for i in range(reihe):
         y += reihenabstand
-        screen.blit(car.colour, (x, y))
+        screen.blit(thiscar, (x, y))
         pygame.display.update()
-    car = pygame.transform.rotate(car.colour, 90)
+    thiscar = pygame.transform.rotate(thiscar, 90)
     for i in range(spalte):
         x += platzabstand
-        screen.blit(car.colour, (x, y))
+        screen.blit(thiscar, (x, y))
         pygame.display.update()
-    car = pygame.transform.rotate(car.colour, -90)
+    thiscar = pygame.transform.rotate(thiscar, -90)
     y += 5
-    screen.blit(car.colour, (x, y))
+    screen.blit(thiscar, (x, y))
     pygame.display.update()
 
 def getcarout(car):
     print('tbd')
-    pay(car)
+    newrevenue = pay(car, revenue)
+    deletecar(car)
+    return newrevenue
 
-
-def pay(car):
+def pay(car, newrevenue):
     hours = car.cartimer//3600
     if hours < car.cartimer/3600:
         hours +=1
     amounttopay = hours * price
     print(f'You have to pay: {amounttopay}')
-
-
-
+    newrevenue += amounttopay
+    print(f'Your revenue is: {newrevenue}')
+    return newrevenue
+def deletecar(car):
+    print('tbd', car)
 
 running = True
 while running == True:
@@ -118,7 +122,7 @@ while running == True:
         print(car.cartimer, car.lotnumber, car.colour, car.extra)
         currenttime = time.time()
         if currenttime > car.exittime:
-            getcarout(car)
+            revenue = getcarout(car)
     if simend == time.time():
         break
     for event in pygame.event.get():
