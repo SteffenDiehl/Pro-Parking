@@ -131,28 +131,28 @@ def uhrzeit(msg='Uhrzeit: ' + time + ' Uhr'):
 
 
 
-def parkplatze():
-    parkplatzbreite = 50
-    parkplatzhohe = 100
-    parkplätze_z = 10
-    parkplätze_sp = 2
+#def parkplatze():
+  #  parkplatzbreite = 50
+   # parkplatzhohe = 100
+    #parkplätze_z = 10
+    #parkplätze_sp = 2
 
 
-    Parkplatz1 = pygame.Rect(x_eingrenzung_links + breite_eingrenzung + 20, y_eingrenzung + 20, parkplatzbreite,
-                             parkplatzhohe)
-    i = 20
-    d = 20
+    #Parkplatz1 = pygame.Rect(x_eingrenzung_links + breite_eingrenzung + 20, y_eingrenzung + 20, parkplatzbreite,
+    #                         parkplatzhohe)
+    #i = 20
+    #d = 20
 
 
-    for f in range(parkplätze_sp):
-        for o in range(parkplätze_z):
-            Parkplatz1 = pygame.Rect(x_eingrenzung_links + breite_eingrenzung + i, y_eingrenzung + d, parkplatzbreite,
-                                     parkplatzhohe)
-            pygame.draw.rect(screen, White, Parkplatz1, 5)
-
-            i += 60
-        i = 100
-        d += 300
+    #for f in range(parkplätze_sp):
+     #   for o in range(parkplätze_z):
+      #      Parkplatz1 = pygame.Rect(x_eingrenzung_links + breite_eingrenzung + i, y_eingrenzung + d, parkplatzbreite,
+       #                              parkplatzhohe)
+        #    pygame.draw.rect(screen, White, Parkplatz1, 5)
+#
+ #           i += 60
+  #      i = 100
+   #     d += 300
 
 def oberflaeche_menue():
     x_button = 450
@@ -322,9 +322,9 @@ def parkhaus_oberflaeche():
             if event.type == pygame.QUIT:
                 runningspiel = False
 
-        datum()
-        uhrzeit()
-        parkplatze()
+       # datum()
+        #uhrzeit()
+        #parkplatze()
         pygame.display.update()
 
 
