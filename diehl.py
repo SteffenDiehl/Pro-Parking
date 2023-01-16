@@ -47,11 +47,12 @@ whitecar = pygame.transform.scale(whitecar, carsize)
 whitecar = pygame.transform.rotate(whitecar, 180)
 carcolours.append(whitecar)
 class cars:
-    def __init__(self, cartimer, entrietime, exittime, lotnumber, colour, extra):
+    def __init__(self, cartimer, entrietime, exittime, lotnumber, carpos, colour, extra):
         self.cartimer = cartimer
         self.entrietime = entrietime
         self.exittime = exittime
         self.lotnumber = lotnumber
+        self.carpos = carpos
         self.colour = colour
         self.extra = extra
 
@@ -61,7 +62,7 @@ def spawncar():
     endtime = starttime + timer # Zeitpunkt ausfahrt
     carcolour = random.choice(carcolours)  # zufällige autofarbe
     extra = situation()  # anspruch auf sonderparkplatz
-    car = cars(timer, starttime, endtime, 0, carcolour, extra)
+    car = cars(timer, starttime, endtime, 0, (0, 0), carcolour, extra)
     carsinlot.append(car)
     print(carsinlot)
     return
@@ -100,7 +101,8 @@ def parkcar(car): # das auto parken
     screen.blit(thiscar, (x, y))
     pygame.display.update()
     car.colour = thiscar
-    return (x,y)
+    car.carpos = (x, y)
+    return car.carpos
 
 def getcarout(car):
     reihe, spalte = parkinglot[car.lotnumber]
@@ -127,7 +129,8 @@ def getcarout(car):
     x += einfahrtslaenge
     screen.blit(thiscar, (x, y))
     pygame.display.update()
-    return (x, y)
+    car.carpos = (x, y)
+    return car.carpos
 
 def pay(car, oldrevenue):
     hours = car.cartimer//hins
@@ -161,6 +164,7 @@ while running == True:
     for i in carsinlot:
         print(i.cartimer, i.lotnumber, i.colour, i.extra)
         currenttime = time.time()
+        screen.blit(i.colour, i.carpos)
         if currenttime > i.exittime:
             screen.blit(i.colour, getcarout(i))
             pay(i, revenue)
