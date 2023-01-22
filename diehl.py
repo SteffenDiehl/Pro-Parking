@@ -63,6 +63,10 @@ def spawncar():
     carcolour = random.choice(carcolours)  # zufällige autofarbe
     extra = situation()  # anspruch auf sonderparkplatz
     car = cars(timer, starttime, endtime, 0, (0, 0), carcolour, extra)
+    if car.extra in extras:
+        getextralot(car)
+    else:
+        car.lotnumber = random.randint(0, lotcount)
     carsinlot.append(car)
     print(carsinlot)
     return
@@ -75,6 +79,10 @@ def situation():
         extra = 'none'
     return extra
 
+def getextralot(car):
+    print('tbd', car)
+    car.lotnumber = random.randint(0, lotcount)
+    return
 def parkcar(car): # das auto parken
     pygame.display.update()
     reihe , spalte = parkinglot[car.lotnumber]
@@ -162,7 +170,7 @@ while running == True:
             car = carsinlot[-1]
             screen.blit(car.colour, parkcar(car))
     for i in carsinlot:
-        print(i.cartimer, i.lotnumber, i.colour, i.extra)
+        print(i.cartimer, i.lotnumber, i.carpos, i.colour, i.extra)
         currenttime = time.time()
         screen.blit(i.colour, i.carpos)
         if currenttime > i.exittime:
