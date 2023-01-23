@@ -6,14 +6,12 @@ pygame.init()
 
 carspawntime = random.randint(3, 5)
 carsinlot = []
-start = time.time()
+starttime = time.time()
 carcolours =[]
 extras = ['family', 'handycaped']
 carcounter = 1
 carsize = (60, 30)
 price = 8 # Preis pro h in €
-simend = time.time() + 3* 60
-zeittraffer = 0
 parkinglot = []
 revenue = 0
 hins = 3600 #StundeinSekunde(3600)
@@ -158,13 +156,13 @@ running = True
 while running == True:
     screen.fill(grey)
     now = time.time()
-    secounds = now - start
+    secounds = now - starttime
     if len(carsinlot) == lotcount:
         print('The parkinglot is full!')
     else:
         if secounds > carspawntime:
             carspawntime = random.randint(3, 8)
-            start = time.time()
+            starttime = time.time()
             spawncar()
             carcounter += 1
             car = carsinlot[-1]
@@ -177,9 +175,7 @@ while running == True:
             screen.blit(i.colour, getcarout(i))
             pay(i, revenue)
             deletecar(i)
-    if simend == time.time():
-        break
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
-    #pygame.display.update()
+    pygame.display.update()
