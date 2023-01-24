@@ -88,10 +88,6 @@ while go:
         P4=pygame.draw.rect(screen,(Weiß),(x_Parkplatz1+(breite_Parkplatz*3+3),y_Parkplatz1,breite_Parkplatz,hohe_Parkplatz),2)
         P5=pygame.draw.rect(screen,(Weiß),(x_Parkplatz1+(breite_Parkplatz*4+4),y_Parkplatz1,breite_Parkplatz,hohe_Parkplatz),2)
 
-
-
-
-
     # 10 Parkplätze
     if P >= 10:
 
@@ -132,6 +128,7 @@ while go:
         P28=pygame.draw.rect(screen, (Weiß),(x_Parkplatz1+(breite_Parkplatz*7+7),y_Parkplatz1-(breite_Straße+hohe_Parkplatz),breite_Parkplatz,hohe_Parkplatz),2)
         P29=pygame.draw.rect(screen, (Weiß),(x_Parkplatz1+(breite_Parkplatz*8+8),y_Parkplatz1-(breite_Straße+hohe_Parkplatz),breite_Parkplatz, hohe_Parkplatz),2)
         P30=pygame.draw.rect(screen, (Weiß),(x_Parkplatz1+(breite_Parkplatz*9+9),y_Parkplatz1-(breite_Straße+hohe_Parkplatz),breite_Parkplatz,hohe_Parkplatz),2)
+
     # 35 Parkplätze
     if P >= 35:
         P31=pygame.draw.rect(screen,(Weiß),(x_Parkplatz1+(breite_Parkplatz*10+10),y_Parkplatz1-(breite_Straße+hohe_Parkplatz),breite_Parkplatz,hohe_Parkplatz),2)
