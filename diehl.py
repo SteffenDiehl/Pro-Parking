@@ -73,6 +73,8 @@ xeinfahrt = 0
 yeinfahrt = (y_Rand1 + hohe_Rand1) + (y_Rand2 - (y_Rand1 + hohe_Rand1))/2 - bcarsize/2
 xausfahrt = 600
 yausfahrt = 300
+belegt = []
+belegtextra = []
 
 #bildeinstellungen
 whitecar = pygame.image.load('whitecar.jpg')
@@ -106,7 +108,11 @@ def spawncar():
     if car.extra in extras:
         getextralot(car)
     else:
-        car.lotnumber = random.randint(0, P)
+        while True:
+            car.lotnumber = random.randint(0, P)
+            if car.lotnumber not in belegt:
+                belegt.append(car.lotnumber)
+                break
     carsinlot.append(car)
     print(carsinlot)
     return
@@ -177,10 +183,8 @@ def parkcar(car): # das auto parken
     car.carpos = (x, y)
     return car.carpos
 def getcarout(car):
-    reihe, spalte = Parkplatz_list[car.lotnumber]
+    x, y = car.carpos
     thiscar = car.colour
-    y = breite_Straße * reihe + yeinfahrt
-    x = breite_Parkplatz * spalte + xeinfahrt + einfahrtslaenge
     screen.blit(thiscar, (x, y))
     y -= hohe_Parkplatz
     screen.blit(thiscar, (x, y))
@@ -233,7 +237,7 @@ def genParkplaetze():
     x = 0
     y = 0
     z = 0
-    for i in range(65):
+    for i in range(100):
         z += 1
         Px = pygame.draw.rect(screen, Weiß, (
             x_Parkplatz1 + (breite_Parkplatz +3) *x, y_Parkplatz1 -y, breite_Parkplatz, hohe_Parkplatz), 2)
@@ -273,4 +277,4 @@ while running == True:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
-    pygame.display.flip()
+    pygame.display.update()
