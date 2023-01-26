@@ -64,7 +64,7 @@ while go:
 
     # Datum
 
-    date = str(date.today())
+    #date = str(date.today())
     def datum(msg='Datum: ' + date):
         my_font = pygame.font.Font(None, 40)
         text_surface = my_font.render(msg, True, Weiß)

@@ -17,7 +17,6 @@ hohe_screen = 530
 pygame.init()
 screen = pygame.display.set_mode((breite_screen, hohe_screen))
 screen.fill(Grau)
-
 # Koordinaten Anzeigefenster
 x_anzeigefenster = 970
 y_anzeigefenster = 0
@@ -75,12 +74,12 @@ xausfahrt = 600
 yausfahrt = 300
 belegt = []
 belegtextra = []
+Parkplatz_list = []
 
 #bildeinstellungen
 whitecar = pygame.image.load('whitecar.jpg')
 whitecar = pygame.transform.scale(whitecar, carsize)
 whitecar = pygame.transform.rotate(whitecar, 180)
-whitecar.set_colorkey((255, 255, 255))
 carcolours.append(whitecar)
 
 def datum(msg='Datum: ' + date):
@@ -131,8 +130,10 @@ def parkcar(car): # das auto parken
     reihe = car.lotnumber // maxplaetze_pro_reihe
     print(reihe, car.lotnumber, maxplaetze_pro_reihe)
     spalte = car.lotnumber % maxplaetze_pro_reihe
+    thiscar = car.colour
+    thiscar_rect = thiscar.get_rect()
     if spalte == 0:
-        spalte = 20
+        spalte = 19
         reihe -=1
     fahrrichtung = 1
     if reihe == 0:
@@ -155,52 +156,47 @@ def parkcar(car): # das auto parken
         meinestrase = 1
         fahrrichtung = 1
         parkrichtung = 1
-    x = xeinfahrt
-    y = yeinfahrt
-    thiscar = car.colour
-    screen.blit(thiscar, (x, y))
-    x += breite_Rand1 + breite_Straße/2 -bcarsize/2
-    screen.blit(thiscar, (x, y))
+    thiscar_rect.x = xeinfahrt
+    thiscar_rect.y = yeinfahrt
+    screen.blit(thiscar, thiscar_rect)
+    thiscar_rect.x += breite_Rand1 + breite_Straße/2 -bcarsize/2
+    screen.blit(thiscar, thiscar_rect)
     thiscar = pygame.transform.rotate(thiscar, -90 * fahrrichtung)
     print(-90 * fahrrichtung)
-    ydrive = y + (breite_Straße + hohe_Parkplatz) * meinestrase * fahrrichtung
-    xdrive = x + breite_Straße/2 +(bcarsize*2)/3 + (breite_Parkplatz + 3) * (spalte-1)
-    while y != ydrive:
-        y += fahrrichtung
-        screen.blit(thiscar, (x, y))
-        genParkplaetze()
-        pygame.display.flip()
-    thiscar = pygame.transform.rotate(thiscar.convert_alpha(), 90 * fahrrichtung)
-    while x != xdrive:
-        x += 1
-        screen.blit(thiscar, (x, y))
-        genParkplaetze()
-        pygame.display.update()
+    ydrive = thiscar_rect.y + (breite_Straße + hohe_Parkplatz) * meinestrase * fahrrichtung
+    xdrive = thiscar_rect.x + breite_Straße/2 + (bcarsize*2)/3 + (breite_Parkplatz + 3) * (spalte-1)
+    while thiscar_rect.y != ydrive:
+        thiscar_rect.y += fahrrichtung
+        genbackground()
+        screen.blit(thiscar, thiscar_rect)
+    thiscar = pygame.transform.rotate(thiscar, 90 * fahrrichtung)
+    while thiscar_rect.x != xdrive:
+        thiscar_rect.x += 1
+        genbackground()
+        screen.blit(thiscar, thiscar_rect)
     thiscar = pygame.transform.rotate(thiscar, -90)
-    y += (hohe_Parkplatz - lcarsize/2 + breite_Straße/2)* parkrichtung - bcarsize/2
-    screen.blit(thiscar, (x, y))
-    car.colour = thiscar
-    car.carpos = (x, y)
-    return car.carpos
+    thiscar_rect.y += (hohe_Parkplatz - lcarsize/2 + breite_Straße/2)* parkrichtung - bcarsize/2
+    screen.blit(thiscar, thiscar_rect)
+    return (thiscar_rect.x, thiscar_rect.y), thiscar
 def getcarout(car):
-    x, y = car.carpos
     thiscar = car.colour
-    screen.blit(thiscar, (x, y))
-    y -= hohe_Parkplatz
-    screen.blit(thiscar, (x, y))
+    thiscar_rect = thiscar.get_rect()
+    thiscar_rect.x, thiscar_rect.y = car.carpos
+    screen.blit(thiscar, thiscar_rect)
+    thiscar_rect.y -= hohe_Parkplatz
+    screen.blit(thiscar, thiscar_rect)
     thiscar = pygame.transform.rotate(thiscar, 90)
-    screen.blit(thiscar, (x, y))
-    while x < xausfahrt:
-        x += 1
-        screen.blit(thiscar, (x, y))
-    while y > yausfahrt:
-        y -= 1
-        screen.blit(thiscar, (x, y))
+    screen.blit(thiscar, thiscar_rect)
+    while thiscar_rect.x < xausfahrt:
+        thiscar_rect.x += 1
+        screen.blit(thiscar, thiscar_rect)
+    while thiscar_rect.y > yausfahrt:
+        thiscar_rect.y -= 1
+        screen.blit(thiscar, thiscar_rect)
     thiscar = pygame.transform.rotate(thiscar, 90)
-    x += einfahrtslaenge
-    screen.blit(thiscar, (x, y))
-    car.carpos = (x, y)
-    return car.carpos
+    thiscar_rect.x += einfahrtslaenge
+    screen.blit(thiscar, thiscar_rect)
+    return (thiscar_rect.x, thiscar_rect.y), thiscar
 def pay(car, oldrevenue):
     hours = car.cartimer//hins
     if hours < car.cartimer/hins:
@@ -211,15 +207,18 @@ def pay(car, oldrevenue):
     print(f'Your revenue is: {newrevenue} €')
     return newrevenue
 def deletecar(car):
+    belegt.remove(car.lotnumber)
     carsinlot.remove(car)
     print('tbd', car)
     return
-
-Parkplatz_list = []
-pygame.draw.rect(screen, (Schwarz), (x_anzeigefenster, y_anzeigefenster, breite_anzeigefenster, hohe_anzeigefenster))  # Anzeigefenster
-pygame.draw.rect(screen, (Schwarz), (x_Rand1, y_Rand1, breite_Rand1, hohe_Rand1))  # Rand links oben
-pygame.draw.rect(screen, (Schwarz), (x_Rand2, y_Rand2, breite_Rand2, hohe_Rand2))  # Rand links unten
-pygame.draw.rect(screen, (Schwarz), (x_zurückfenster, y_zurückfenster, breite_zurückfenster, hohe_zurückfenster))
+def genscreen():
+    screen = pygame.display.set_mode((breite_screen, hohe_screen))
+    screen.fill(Grau)
+def genrand():
+    pygame.draw.rect(screen, (Schwarz), (x_anzeigefenster, y_anzeigefenster, breite_anzeigefenster, hohe_anzeigefenster))  # Anzeigefenster
+    pygame.draw.rect(screen, (Schwarz), (x_Rand1, y_Rand1, breite_Rand1, hohe_Rand1))  # Rand links oben
+    pygame.draw.rect(screen, (Schwarz), (x_Rand2, y_Rand2, breite_Rand2, hohe_Rand2))  # Rand links unten
+    pygame.draw.rect(screen, (Schwarz), (x_zurückfenster, y_zurückfenster, breite_zurückfenster, hohe_zurückfenster))
 
 # Datum
 #date = str(date.today())
@@ -249,11 +248,13 @@ def genParkplaetze():
             y *= -1
         if z == 19  or z == 59:
             y += breite_Straße + hohe_Parkplatz
-
-    pygame.display.update()
+def genbackground():
+    genscreen()
+    genrand()
+    genParkplaetze()
 running = True
 while running == True:
-    genParkplaetze()
+    genbackground()
     now = time.time()
     secounds = now - starttime
     if len(carsinlot) == P:
@@ -265,13 +266,14 @@ while running == True:
             spawncar()
             carcounter += 1
             car = carsinlot[-1]
-            car.carpos = parkcar(car)
+            car.carpos, car.colour = parkcar(car)
     for i in carsinlot:
         print(i.cartimer, i.lotnumber, i.carpos, i.colour, i.extra)
         currenttime = time.time()
         screen.blit(i.colour, i.carpos)
         if currenttime > i.exittime:
-            screen.blit(i.colour, getcarout(i))
+            i.carpos, i.colour = getcarout()
+            screen.blit(i.colour, i.carpos)
             pay(i, revenue)
             deletecar(i)
     for event in pygame.event.get():
