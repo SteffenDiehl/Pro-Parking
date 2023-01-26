@@ -1,0 +1,8 @@
+    Parklist = []
+    parkvar = 0
+    for i in range(P):
+        parkvar +=1
+        Parkplatz = pygame.draw.rect(screen, (Weiß), (x_Parkplatz1 + (breite_Parkplatz * parkvar + parkvar), y_Parkplatz1, breite_Parkplatz, hohe_Parkplatz), 2)
+        Parklist.append(Parkplatz)
+        if parkvar == (maxplaetze_pro_reihe -1):
+            parkvar = 0
