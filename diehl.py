@@ -53,7 +53,7 @@ extras = ['family', 'handycaped']
 carcounter = 1
 carsize = (60, 30)
 lcarsize, bcarsize = carsize
-
+autobilder = ['whitecar.jpg', 'redcar.png']
 # variable bezahlung
 price = 8  # Preis pro h in €
 revenue = 0
@@ -78,11 +78,12 @@ Parkplatz_list_extra =[]
 Parkplatzanzahl = 100  # Parkplatzanzahl
 Parkplatzanzahl_extra = 10
 Parkplatzanzahl_ohne_extra = Parkplatzanzahl - Parkplatzanzahl_extra
-# bildeinstellungen
-whitecar = pygame.image.load('whitecar.jpg')
-whitecar = pygame.transform.scale(whitecar, carsize)
-whitecar = pygame.transform.rotate(whitecar, 180)
-carcolours.append(whitecar)
+# lade autobilder
+for i in autobilder:
+    carpic = pygame.image.load(i)
+    carpic = pygame.transform.scale(carpic, carsize)
+    carpic = pygame.transform.rotate(carpic, 180)
+    carcolours.append(carpic)
 
 class cars:
     def __init__(self, cartimer, entrietime, exittime, lotnumber, carpos, image, extra):
@@ -200,27 +201,29 @@ def getcarout(get_car):
     reihe, spalte, meinestrase, fahrrichtung, parkrichtung = howtodrive(get_car)
     if fahrrichtung == 0:
         fahrrichtung = -1
+    elif fahrrichtung == 1:
+        fahrrichtung = 0
     self_rect.x, self_rect.y = get_car.carpos
     screen.blit(self, self_rect)
-    self_rect.y -= hohe_Parkplatz * parkrichtung
+    self_rect.y -= (hohe_Parkplatz - lcarsize // 2 + breite_Straße // 2) * parkrichtung - bcarsize // 2 # hohe_Parkplatz * parkrichtung
     genbackground()
     screen.blit(self, self_rect)
     self = pygame.transform.rotate(self, 90 * parkrichtung)
     xausfahrt = (breite_Parkplatz + 3) * (maxplaetze_pro_reihe - spalte) + breite_Straße // 2
-    yausfahrt = yeinfahrt + (breite_Straße + hohe_Parkplatz)
+    yausfahrt = yeinfahrt + (breite_Straße + hohe_Parkplatz)#(y_zurückfenster - hohe_anzeigefenster)/2 + hohe_anzeigefenster - bcarsize/2
     xfahrt = breite_screen - lcarsize
     while self_rect.x < xausfahrt:
         self_rect.x += 1
-        genbackground()
         screen.blit(self, self_rect)
+        genbackground()
     self = pygame.transform.rotate(self, 90 * fahrrichtung)
     print('get_out', self_rect.y, yausfahrt, fahrrichtung)
     while self_rect.y != yausfahrt:
         print(self_rect.y, yausfahrt)
         self_rect.y -= fahrrichtung
-        genbackground()
         screen.blit(self, self_rect)
-    self = pygame.transform.rotate(self, 90 * fahrrichtung)
+        genbackground()
+    self = pygame.transform.rotate(self, 90 * fahrrichtung * (-parkrichtung))
     while self_rect.x != xfahrt:
         self_rect.x += 1
         genbackground()
@@ -233,9 +236,9 @@ def pay(car, oldrevenue):
     if hours < car.cartimer / hins:
         hours += 1
     amounttopay = hours * price
-    print(f'You have to pay: {amounttopay} €')
+    print(f'You have to pay: {amounttopay} Euro')
     newrevenue = oldrevenue + amounttopay
-    print(f'Your revenue is: {newrevenue} €')
+    print(f'Your revenue is: {newrevenue} Euro')
     return newrevenue
 
 
@@ -319,7 +322,12 @@ while running == True:
         screen.blit(i.image, i.carpos)
         if now > i.exittime/zeittraffer:
             i.carpos, i.image = getcarout(i)
-            pay(i, revenue)
+            revenue = pay(i, revenue)
+            deletecar(i)
+    if now == 24 * hins * zeittraffer:
+        for i in carsinlot:
+            i.carpos, i.image = getcarout(i)
+            revenue = pay(i, revenue)
             deletecar(i)
     for event in pygame.event.get():
         if event.type == QUIT:
