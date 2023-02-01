@@ -85,7 +85,7 @@ for i in autobilder:
     carpic = pygame.transform.rotate(carpic, 180)
     carcolours.append(carpic)
 
-class cars:
+class cars: #definiere welche variablen jedes Auto haben soll
     def __init__(self, cartimer, entrietime, exittime, lotnumber, carpos, image, extra):
         self.cartimer = cartimer
         self.entrietime = entrietime
@@ -95,29 +95,29 @@ class cars:
         self.image = image
         self.extra = extra
 
-def spawncar():
+def spawncar(): #erstelle ein Auto
     global carsinlot
-    timer = random.randint(minparkdauer, maxparkdauer)
+    timer = random.randint(minparkdauer, maxparkdauer) #zufällige Parkzeit
     starttime = time.time()  # Zeitpunkt einfahrt
     endtime = starttime + timer  # Zeitpunkt ausfahrt
     carimage = random.choice(carcolours)  # zufällige autofarbe
     extra = situation()  # anspruch auf sonderparkplatz
-    car = cars(timer, starttime, endtime, 0, (0, 0), carimage, extra)
-    if car.extra in extras:
-        if len(Parkplatz_list_extra) < Parkplatzanzahl_extra:
+    car = cars(timer, starttime, endtime, 0, (0, 0), carimage, extra) #erstelle das Auto
+    if car.extra in extras: #prüfe ob es ein recht auf Sonderparkplätze hat
+        if len(Parkplatz_list_extra) < Parkplatzanzahl_extra: #prüfe ob es noch Sonderparkplätze gibt
             while True:
                 car.lotnumber = random.randint(Parkplatzanzahl_ohne_extra + 1, Parkplatzanzahl)
-                if car.lotnumber not in belegt_extra:
+                if car.lotnumber not in belegt_extra: #prüfe ob der zugewiesene Sonderparkplatz belegt ist
                     belegt_extra.append(car.lotnumber)
                     break
         else:
             while True:
                 car.lotnumber = random.randint(0, Parkplatzanzahl_ohne_extra)
-                if car.lotnumber not in belegt:
+                if car.lotnumber not in belegt: #prüfe ob der zugewiesene Parkplatz belegt ist
                     belegt.append(car.lotnumber)
                     break
     else:
-        while True:
+        while True: #prüfe ob der zugewiesene Parkplatz belegt ist
             car.lotnumber = random.randint(0, Parkplatzanzahl_ohne_extra)
             if car.lotnumber not in belegt:
                 belegt.append(car.lotnumber)
@@ -127,14 +127,14 @@ def spawncar():
     return
 
 def situation():
-    x = random.randint(0, 10)  # je 10% chance auf anspruch für fimilien oder behinderten parkplatz
+    x = random.randint(0, 10)  # je 10% chance auf Anspruch für Familien- oder Behindertenparkplatz
     if x == 0 or x == 1:
         extra = extras[x]
     else:
         extra = 'none'
     return extra
 
-def howtodrive(get_car):
+def howtodrive(get_car): #stelle fest wo dein Parkplatz liegt und wie du zu parken hast
     global meinestrase, parkrichtung
     reihe = get_car.lotnumber // maxplaetze_pro_reihe
     # print(reihe, car.lotnumber, maxplaetze_pro_reihe)
@@ -144,23 +144,23 @@ def howtodrive(get_car):
         if reihe != 0:
             reihe -= 1
     fahrrichtung = 1
-    if reihe == 0:
+    if reihe == 3: #reihe oben
         meinestrase = 2
         fahrrichtung = -1
         parkrichtung = -1
-    elif reihe == 1:
+    elif reihe == 1: #2. reihe von oben
         meinestrase = 1
         fahrrichtung = -1
         parkrichtung = -1
-    elif reihe == 2:
+    elif reihe == 0: #reihe mitte
         meinestrase = 1
         fahrrichtung = -1
         parkrichtung = 1
-    elif reihe == 3:
+    elif reihe == 2: #2. reihe von unten
         meinestrase = 0
         fahrrichtung = 0
         parkrichtung = 1
-    elif reihe == 4:
+    elif reihe == 4: #reihe unten
         meinestrase = 1
         fahrrichtung = 1
         parkrichtung = 1
@@ -170,7 +170,7 @@ def howtodrive(get_car):
 def parkcar(get_car):  # das auto parken
     self = get_car.image
     self_rect = self.get_rect()
-    reihe, spalte, meinestrase, fahrrichtung, parkrichtung = howtodrive(get_car)
+    reihe, spalte, meinestrase, fahrrichtung, parkrichtung = howtodrive(get_car) #stelle fest wo dein Parkplatz ist
     self_rect.x = xeinfahrt
     self_rect.y = yeinfahrt
     screen.blit(self, self_rect)
@@ -180,16 +180,16 @@ def parkcar(get_car):  # das auto parken
     print(-90 * fahrrichtung)
     ydrive = self_rect.y + (breite_Straße + hohe_Parkplatz) * meinestrase * fahrrichtung
     xdrive = self_rect.x + breite_Straße // 2 + (bcarsize * 2) // 3 + (breite_Parkplatz + 3) * (spalte - 1)
-    while self_rect.y != ydrive:
+    while self_rect.y != ydrive: #fahre bis du die Straße, in der dein Parkplatz liegt erreichst
         self_rect.y += fahrrichtung
-        genbackground()
+        ##genbackground()
         screen.blit(self, self_rect)
     self = pygame.transform.rotate(self, 90 * fahrrichtung)
-    while self_rect.x != xdrive:
+    while self_rect.x != xdrive: #fahre bis du deinen Parkplatz erreicht hast
         self_rect.x += 1
-        genbackground()
+        #genbackground()
         screen.blit(self, self_rect)
-    self = pygame.transform.rotate(self, -90)
+    self = pygame.transform.rotate(self, -90) #parke ein
     self_rect.y += (hohe_Parkplatz - lcarsize // 2 + breite_Straße // 2) * parkrichtung - bcarsize // 2
     genbackground()
     screen.blit(self, self_rect)
@@ -198,51 +198,50 @@ def parkcar(get_car):  # das auto parken
 def getcarout(get_car):
     self = get_car.image
     self_rect = self.get_rect()
-    reihe, spalte, meinestrase, fahrrichtung, parkrichtung = howtodrive(get_car)
+    reihe, spalte, meinestrase, fahrrichtung, parkrichtung = howtodrive(get_car) #stelle fest wo und wie du geparkt hast
     if fahrrichtung == 0:
         fahrrichtung = -1
     elif fahrrichtung == 1:
         fahrrichtung = 0
     self_rect.x, self_rect.y = get_car.carpos
     screen.blit(self, self_rect)
-    self_rect.y -= (hohe_Parkplatz - lcarsize // 2 + breite_Straße // 2) * parkrichtung - bcarsize // 2 # hohe_Parkplatz * parkrichtung
+    self_rect.y -= (hohe_Parkplatz - lcarsize // 2 + breite_Straße // 2) * parkrichtung - bcarsize // 2 #parke aus
     genbackground()
     screen.blit(self, self_rect)
     self = pygame.transform.rotate(self, 90 * parkrichtung)
     xausfahrt = (breite_Parkplatz + 3) * (maxplaetze_pro_reihe - spalte) + breite_Straße // 2
-    yausfahrt = yeinfahrt + (breite_Straße + hohe_Parkplatz)#(y_zurückfenster - hohe_anzeigefenster)/2 + hohe_anzeigefenster - bcarsize/2
+    yausfahrt = yeinfahrt + (breite_Straße + hohe_Parkplatz)
     xfahrt = breite_screen - lcarsize
-    while self_rect.x < xausfahrt:
+    while self_rect.x < xausfahrt: #fahre bis ans Ende der Straße
         self_rect.x += 1
         screen.blit(self, self_rect)
-        genbackground()
+        #genbackground()
     self = pygame.transform.rotate(self, 90 * fahrrichtung)
-    print('get_out', self_rect.y, yausfahrt, fahrrichtung)
-    while self_rect.y != yausfahrt:
+    while self_rect.y != yausfahrt: #fahre bis du die Ausfahrt erreichst
         print(self_rect.y, yausfahrt)
         self_rect.y -= fahrrichtung
         screen.blit(self, self_rect)
-        genbackground()
+        #genbackground()
     self = pygame.transform.rotate(self, 90 * fahrrichtung * (-parkrichtung))
-    while self_rect.x != xfahrt:
+    while self_rect.x != xfahrt: #fahre zur Ausfahrt raus
         self_rect.x += 1
-        genbackground()
+        #genbackground()
         screen.blit(self, self_rect)
     return (self_rect.x, self_rect.y), self
 
 
-def pay(car, oldrevenue):
-    hours = car.cartimer // hins
+def pay(car, oldrevenue): #leider musst auch du zahlen
+    hours = car.cartimer // hins #wie lange hast du geparkt
     if hours < car.cartimer / hins:
-        hours += 1
+        hours += 1 #angefangene Stunden müssen voll gezahlt werden
     amounttopay = hours * price
     print(f'You have to pay: {amounttopay} Euro')
-    newrevenue = oldrevenue + amounttopay
+    newrevenue = oldrevenue + amounttopay #wie viel wurde bisher verdient
     print(f'Your revenue is: {newrevenue} Euro')
     return newrevenue
 
 
-def deletecar(car):
+def deletecar(car): #entferne das Auto aus dem Parkplatz
     belegt.remove(car.lotnumber)
     print(carsinlot, car)
     carsinlot.remove(car)
@@ -277,11 +276,11 @@ def genParkplaetze():
     y = 0
     z = 0
     for i in range(Parkplatzanzahl):
-        z += 1
         Px = pygame.draw.rect(screen, white, (
             x_Parkplatz1 + (breite_Parkplatz + 3) * x, y_Parkplatz1 - y, breite_Parkplatz, hohe_Parkplatz), 2)
         Parkplatz_list.append(Px)
         x += 1
+        z += 1
         if x == maxplaetze_pro_reihe:
             x = 0
         if z == 40 or z == 80 or z == 60:
@@ -299,17 +298,17 @@ def genbackground():
     datum()
 
 # main-loop
-running = True
+park_running = True
 genbackground()
 pygame.display.flip()
-while running == True:
+while park_running == True: #parkloop
     now = time.time()
     secounds = now - starttime
-    if len(carsinlot) == Parkplatzanzahl:
+    if len(carsinlot) == Parkplatzanzahl: #können noch Autos in das Parkhaus fahren
         print('The parkinglot is full!')
     else:
         carspawntime = (random.randint(minspawntime, maxspawntime))/zeittraffer
-        if secounds > carspawntime:
+        if secounds > carspawntime: #steht ein Auto vor dem Parkhaus
             carspawntime = random.randint(1, 3)
             starttime = time.time()
             spawncar()
@@ -317,19 +316,19 @@ while running == True:
             car = carsinlot[-1]
             car.carpos, car.image = parkcar(car)
     pygame.display.update()
-    for i in carsinlot:
+    for i in carsinlot: #welche Autos parken aktuell
         print(i.cartimer, i.lotnumber, i.carpos, i.image, i.extra)
         screen.blit(i.image, i.carpos)
-        if now > i.exittime/zeittraffer:
+        if now > i.exittime/zeittraffer: #fährt ein Auto raus
             i.carpos, i.image = getcarout(i)
             revenue = pay(i, revenue)
             deletecar(i)
-    if now == 24 * hins * zeittraffer:
+    if now == 24 * hins * zeittraffer: #alle Autos müssen raus fahren
         for i in carsinlot:
             i.carpos, i.image = getcarout(i)
             revenue = pay(i, revenue)
             deletecar(i)
     for event in pygame.event.get():
         if event.type == QUIT:
-            running = False
+            park_running = False
     pygame.display.update()
