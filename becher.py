@@ -1,7 +1,8 @@
 import datetime
-
+import time
 import pygame
 import random
+import asyncio
 
 from pygame.locals import*
 from datetime import date
@@ -12,7 +13,7 @@ BREITE = 1400
 HÖHE = 750
 GRUEN = (0, 255, 0)
 BLACK = (0,0,0)
-White = (255,255,255)
+White = weiß = (255,255,255)
 RED = (255,0,0)
 BLUE = (0,0,255)
 YELLOW = (255,200,0)
@@ -54,7 +55,12 @@ y_zurück = 10
 höhe_zurück = 50
 breite_zurück = 80
 
-
+#variablen
+variable_für_anzahl_der_parkplätze = 5
+variable_für_anzahl_der_behinderten_parkplätze = 0
+variable_für_kosten = 0
+variable_öffnungszeit = 00.00
+variable_schließzeit = 01.00
 
 
 
@@ -186,10 +192,11 @@ def oberflaeche_menue():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    button_play = pygame.Rect(x_button - 10, y_button_play - 10, breit_Botton + 20, hohe_button + 20)
-                    pygame.draw.rect(screen, RED, button_play, 10)
+                quit()
+            #elif event.type == MOUSEBUTTONDOWN:
+             #   if event.button == 1:
+              #      button_play = pygame.Rect(x_button - 10, y_button_play - 10, breit_Botton + 20, hohe_button + 20)
+               #     pygame.draw.rect(screen, RED, button_play, 10)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
@@ -214,7 +221,7 @@ def oberflaeche_menue():
             button_settings = pygame.Rect(x_button - 10, y_button_setting - 10, breit_Botton + 20, hohe_button + 20)
             pygame.draw.rect(screen, White, button_settings, 10)
             if event.type == MOUSEBUTTONDOWN:
-                running = False
+                #running = False
                 settings()
 
         else:
@@ -236,6 +243,7 @@ def oberflaeche_menue():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     running = False
+                    quit()
         else:
             button_exit = pygame.Rect(x_button, y_buuton_exit, breit_Botton, hohe_button)
 
@@ -371,6 +379,7 @@ def Öffnungszeiten_Variable_bis (msg='bis: '):
     text_rect = text_surface.get_rect()
     text_rect.center = (x_taster_minus + breite_taster_plus_minus + abstand_der_taster_x + (abstand_zw_zwei_plus_minus - abstand_der_taster_x- breite_taster_plus_minus)/2, y_taster_plus_minus + abstand_der_taster_y*3 + höhe_taster_plus_minus/2)
     screen.blit(text_surface, text_rect)
+
 #def anzeige_variable_für_anzahl_der_parkpätze (msg = str(variable_für_anzahl_der_parkplätze)):
  #   my_font = pygame.font.Font(None, 45)
   #  text_surface = my_font.render(msg, True, White)
@@ -379,16 +388,21 @@ def Öffnungszeiten_Variable_bis (msg='bis: '):
     #screen.blit(text_surface, text_rect)
 
 
+
 def settings():
     runningsetting = True
     farbe = BLACK
 
+    #zeit zwischen dem Drücken einer taste bei plus und minus
+    import time
+    delay = 0.1
+
     # variablen
-    variable_für_anzahl_der_parkplätze = 0
-    variable_für_anzahl_der_behinderten_parkplätze = 0
-    variable_für_kosten = 0
-    variable_öffnungszeit = 00.00
-    variable_schließzeit = 01.00
+    global variable_für_anzahl_der_parkplätze
+    global variable_für_anzahl_der_behinderten_parkplätze
+    global variable_für_kosten
+    global variable_öffnungszeit
+    global variable_schließzeit
 
     #höchste Anzahl der Variablen
     höchste_anzahl_parkplätze = 100
@@ -398,6 +412,7 @@ def settings():
     letzte_schließzeit = 24.00
 
     while runningsetting:
+
         #Bildschirmfarbe/Hintergrundfarbe
         screen.fill(farbe)
 
@@ -457,8 +472,9 @@ def settings():
             pygame.draw.rect(screen, White, minustaste_parkplätze, 4)
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    variable_für_anzahl_der_parkplätze -= 1
-                   #print(variable_für_anzahl_der_parkplätze)
+                    variable_für_anzahl_der_parkplätze -= 5
+                    time.sleep(delay)
+
 
         plustaste_parkplätze = pygame.Rect(x_taster_minus + abstand_der_taster_x, y_taster_plus_minus, breite_taster_plus_minus, höhe_taster_plus_minus)
         pygame.draw.rect(screen, GRUEN, plustaste_parkplätze, 0)
@@ -467,8 +483,9 @@ def settings():
             pygame.draw.rect(screen, White, plustaste_parkplätze, 4)
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    variable_für_anzahl_der_parkplätze += 1
-                    #print(variable_für_anzahl_der_parkplätze)
+                    variable_für_anzahl_der_parkplätze += 5
+                    time.sleep(delay)
+
 
         if variable_für_anzahl_der_parkplätze <= 0:
             variable_für_anzahl_der_parkplätze = 0
@@ -492,6 +509,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_für_anzahl_der_behinderten_parkplätze -= 1
+                    time.sleep(delay)
 
         plustaste_behinderten_parkplätze = pygame.Rect(x_taster_minus + abstand_der_taster_x, y_taster_plus_minus + abstand_der_taster_y, breite_taster_plus_minus, höhe_taster_plus_minus)
         pygame.draw.rect(screen, GRUEN, plustaste_behinderten_parkplätze, 0)
@@ -502,6 +520,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_für_anzahl_der_behinderten_parkplätze += 1
+                    time.sleep(delay)
 
         if variable_für_anzahl_der_behinderten_parkplätze <= 0:
             variable_für_anzahl_der_behinderten_parkplätze = 0
@@ -527,6 +546,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_für_kosten -= 0.5
+                    time.sleep(delay)
 
         plustaste_je_stunde = pygame.Rect(x_taster_minus + abstand_der_taster_x,
                                                        y_taster_plus_minus + abstand_der_taster_y*2,
@@ -539,6 +559,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_für_kosten += 0.5
+                    time.sleep(delay)
 
         if variable_für_kosten <= 0:
             variable_für_kosten = 0
@@ -550,6 +571,7 @@ def settings():
         text_rect = text_surface.get_rect()
         text_rect.center = (x_taster_minus + breite_taster_plus_minus + (abstand_der_taster_x - breite_taster_plus_minus)/2, y_taster_plus_minus + abstand_der_taster_y*2 + höhe_taster_plus_minus/2 )
         screen.blit(text_surface, text_rect)
+
 
         # Hier entstehen die Taster für die Öffnungszeiten
         Öffnungszeiten_Variable_von()
@@ -563,6 +585,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_öffnungszeit -= 0.5
+                    time.sleep(delay)
 
         plustaste_offen = pygame.Rect(x_taster_minus + abstand_der_taster_x,
                                           y_taster_plus_minus + abstand_der_taster_y * 3,
@@ -575,6 +598,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_öffnungszeit += 0.5
+                    time.sleep(delay)
 
         if variable_öffnungszeit <= 0:
             variable_öffnungszeit = 00.00
@@ -602,6 +626,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_schließzeit -= 0.5
+                    time.sleep(delay)
 
 
         plustaste_geschlossen = pygame.Rect(x_taster_minus + abstand_der_taster_x + abstand_zw_zwei_plus_minus,
@@ -615,6 +640,7 @@ def settings():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     variable_schließzeit += 0.5
+                    time.sleep(delay)
 
         if variable_schließzeit <= 1:
             variable_schließzeit = 01.00
