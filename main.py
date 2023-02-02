@@ -66,26 +66,26 @@ variable_öffnungszeit = 00.00
 variable_schließzeit = 01.00
 
 # Koordinaten Anzeigefenster
-x_anzeigefenster = 1000
+x_anzeigefenster = 1100
 y_anzeigefenster = 0
 breite_anzeigefenster = 300
 hohe_anzeigefenster = 410
 
 # Koordinaten Zurückfenster
-x_zurückfenster = 1000
+x_zurückfenster = 1100
 y_zurückfenster = 470
 breite_zurückfenster = 300
-hohe_zurückfenster = 130
+hohe_zurückfenster = 400
 
 # Koordinaten Rand Links
 x_Rand1 = 0
 y_Rand1 = 0
-breite_Rand1 = 80
+breite_Rand1 = 100
 hohe_Rand1 = 300
 x_Rand2 = 0
 y_Rand2 = 350
-breite_Rand2 = 40
-hohe_Rand2 = 250
+breite_Rand2 = 100
+hohe_Rand2 = 400
 
 # Parkplatz maße
 hohe_Parkplatz = 60
@@ -188,7 +188,7 @@ def datum(msg='Datum: '+ date):
     my_font = pygame.font.Font(None, 40)
     text_surface = my_font.render(msg, True, White)
     text_rect = text_surface.get_rect()
-    text_rect.center = (1130, 250 )
+    text_rect.center = (1250, 40 )
     screen.blit(text_surface, text_rect)
 
 def uhrzeit(msg='Uhrzeit: ' + zeit + ' Uhr'):
@@ -374,10 +374,10 @@ def genscreen():
     screen.fill(GRAY)
 
 def genrand():
-    pygame.draw.rect(screen, BLACK, (x_anzeigefenster, y_anzeigefenster, breite_anzeigefenster, hohe_anzeigefenster))  # Anzeigefenster
+    pygame.draw.rect(screen, BLACK, (x_anzeigefenster, y_anzeigefenster, breite_anzeigefenster, hohe_anzeigefenster))  # Rand rechts oben
     pygame.draw.rect(screen, BLACK, (x_Rand1, y_Rand1, breite_Rand1, hohe_Rand1))  # Rand links oben
     pygame.draw.rect(screen, BLACK, (x_Rand2, y_Rand2, breite_Rand2, hohe_Rand2))  # Rand links unten
-    pygame.draw.rect(screen, BLACK, (x_zurückfenster, y_zurückfenster, breite_zurückfenster, hohe_zurückfenster))
+    pygame.draw.rect(screen, BLACK, (x_zurückfenster, y_zurückfenster, breite_zurückfenster, hohe_zurückfenster))  # Rand rechts unten
 
 def genParkplaetze(j):
     Parkplatz_list = []
@@ -386,17 +386,24 @@ def genParkplaetze(j):
     z = 0
     for i in range(variable_für_anzahl_der_parkplätze):
         Px = pygame.draw.rect(screen, White, (
-            x_Parkplatz1 + (breite_Parkplatz + 3) * x, y_Parkplatz1 - y, breite_Parkplatz, hohe_Parkplatz), 2)
+            x_Parkplatz1 + (breite_Parkplatz + 3) * x, y_Parkplatz1 + y, breite_Parkplatz, hohe_Parkplatz), 2)
         if j == 0:
             Parkplatz_list.append(Px)
         x += 1
         z += 1
         if x == maxplaetze_pro_reihe:
             x = 0
-        if z == 40 or z == 80 or z == 60:
-            y *= -1
-        if z == 20 or z == 60:
+        if z == 60:
+            y += -(breite_Straße+hohe_Parkplatz)
+        if z == 20 or z == 100:
             y += breite_Straße + hohe_Parkplatz
+        if z == 80:
+            y += 4* (breite_Straße+hohe_Parkplatz)
+        if z== 40:
+            y += -(breite_Straße+hohe_Parkplatz)*2
+
+
+
     if j == 0:
         for i in range(variable_für_anzahl_der_behinderten_parkplätze):
             Pex = Parkplatz_list[-1]
@@ -618,7 +625,7 @@ def settings():
     global variable_schließzeit
 
     #höchste Anzahl der Variablen
-    höchste_anzahl_parkplätze = 100
+    höchste_anzahl_parkplätze = 120
     höchste_anzahl_behinderten_parkplätze = 10
     höchsten_kosten = 10
     letzte_öffnung = 23.00

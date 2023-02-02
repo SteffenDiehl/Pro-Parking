@@ -1,8 +1,11 @@
 import time
 import random
+import pygame
 from pygame.locals import *
+import datetime
 import pygame
 from datetime import date
+import sys
 
 black = (0, 0, 0)
 grey = (127, 127, 127)
@@ -55,13 +58,13 @@ autobilder = ['whitecar.jpg', 'redcar.png']
 price = 8  # Preis pro h in €
 revenue = 0
 # variable parkdauer
-zeittraffer = 120
+zeittraffer = 30
 hins = 3600  # StundeinSekunde(3600)
 minparkdauer = hins/4 # 15 min in s
 maxparkdauer = 12 * hins # 12h in s
 #variable spawntime
 minspawntime = hins/60 # min 1 min zwischen spawns
-maxspawntime = 15*(hins/60) # max 15 min zwischen spawns
+maxspawntime = 5*(hins/60) # max 5 min zwischen spawns
 
 # variable parken
 maxplaetze_pro_reihe = 20
@@ -101,10 +104,9 @@ def spawncar(): #erstelle ein Auto
     extra = situation()  # anspruch auf sonderparkplatz
     car = cars(timer, starttime, endtime, 0, (0, 0), carimage, extra) #erstelle das Auto
     if car.extra in extras: #prüfe ob es ein recht auf Sonderparkplätze hat
-        if len(belegt_extra) < Parkplatzanzahl_extra: #prüfe ob es noch Sonderparkplätze gibt
+        if len(Parkplatz_list_extra) < Parkplatzanzahl_extra: #prüfe ob es noch Sonderparkplätze gibt
             while True:
                 car.lotnumber = random.randint(Parkplatzanzahl_ohne_extra + 1, Parkplatzanzahl)
-                #print(Parkplatzanzahl_ohne_extra, Parkplatzanzahl)
                 if car.lotnumber not in belegt_extra: #prüfe ob der zugewiesene Sonderparkplatz belegt ist
                     belegt_extra.append(car.lotnumber)
                     break
@@ -121,11 +123,11 @@ def spawncar(): #erstelle ein Auto
                 belegt.append(car.lotnumber)
                 break
     carsinlot.append(car)
-    #print(carsinlot)
+    print(carsinlot)
     return
 
 def situation():
-    x = random.randint(0, 20)  # je 10% chance auf Anspruch für Familien- oder Behindertenparkplatz
+    x = random.randint(0, 10)  # je 10% chance auf Anspruch für Familien- oder Behindertenparkplatz
     if x == 0 or x == 1:
         extra = extras[x]
     else:
@@ -162,6 +164,7 @@ def howtodrive(get_car): #stelle fest wo dein Parkplatz liegt und wie du zu park
         meinestrase = 1
         fahrrichtung = 1
         parkrichtung = 1
+    print(reihe, spalte)
     return reihe, spalte, meinestrase, fahrrichtung, parkrichtung
 
 def parkcar(get_car):  # das auto parken
@@ -174,20 +177,21 @@ def parkcar(get_car):  # das auto parken
     self_rect.x += breite_Rand1 + breite_Straße // 2 - bcarsize // 2
     screen.blit(self, self_rect)
     self = pygame.transform.rotate(self, -90 * fahrrichtung)
+    print(-90 * fahrrichtung)
     ydrive = self_rect.y + (breite_Straße + hohe_Parkplatz) * meinestrase * fahrrichtung
     xdrive = self_rect.x + breite_Straße // 2 + (bcarsize * 2) // 3 + (breite_Parkplatz + 3) * (spalte - 1)
     while self_rect.y != ydrive: #fahre bis du die Straße, in der dein Parkplatz liegt erreichst
         self_rect.y += fahrrichtung
-        genbackground(1)
+        ##genbackground()
         screen.blit(self, self_rect)
     self = pygame.transform.rotate(self, 90 * fahrrichtung)
     while self_rect.x != xdrive: #fahre bis du deinen Parkplatz erreicht hast
         self_rect.x += 1
-        genbackground(1)
+        #genbackground()
         screen.blit(self, self_rect)
     self = pygame.transform.rotate(self, -90) #parke ein
     self_rect.y += (hohe_Parkplatz - lcarsize // 2 + breite_Straße // 2) * parkrichtung - bcarsize // 2
-    genbackground(1)
+    genbackground()
     screen.blit(self, self_rect)
     return (self_rect.x, self_rect.y), self
 
@@ -202,7 +206,7 @@ def getcarout(get_car):
     self_rect.x, self_rect.y = get_car.carpos
     screen.blit(self, self_rect)
     self_rect.y -= (hohe_Parkplatz - lcarsize // 2 + breite_Straße // 2) * parkrichtung - bcarsize // 2 #parke aus
-    genbackground(1)
+    genbackground()
     screen.blit(self, self_rect)
     self = pygame.transform.rotate(self, 90 * parkrichtung)
     xausfahrt = (breite_Parkplatz + 3) * (maxplaetze_pro_reihe - spalte) + breite_Straße // 2
@@ -211,16 +215,17 @@ def getcarout(get_car):
     while self_rect.x < xausfahrt: #fahre bis ans Ende der Straße
         self_rect.x += 1
         screen.blit(self, self_rect)
-        genbackground(1)
+        #genbackground()
     self = pygame.transform.rotate(self, 90 * fahrrichtung)
     while self_rect.y != yausfahrt: #fahre bis du die Ausfahrt erreichst
+        print(self_rect.y, yausfahrt)
         self_rect.y -= fahrrichtung
         screen.blit(self, self_rect)
-        genbackground(1)
+        #genbackground()
     self = pygame.transform.rotate(self, 90 * fahrrichtung * (-parkrichtung))
     while self_rect.x != xfahrt: #fahre zur Ausfahrt raus
         self_rect.x += 1
-        genbackground(1)
+        #genbackground()
         screen.blit(self, self_rect)
     return (self_rect.x, self_rect.y), self
 
@@ -237,11 +242,10 @@ def pay(car, oldrevenue): #leider musst auch du zahlen
 
 
 def deletecar(car): #entferne das Auto aus dem Parkplatz
-    if car.extra == 'none':
-        belegt.remove(car.lotnumber)
-    else:
-        belegt_extra.remove(car.lotnumber)
+    belegt.remove(car.lotnumber)
+    print(carsinlot, car)
     carsinlot.remove(car)
+    print('tbd - delete', car)
     return
 
 
@@ -266,7 +270,7 @@ def datum(msg='Datum: ' + date):
     text_rect.center = (1125, 15)
     screen.blit(text_surface, text_rect)
 
-def genParkplaetze(j):
+def genParkplaetze():
     Parkplatz_list = []
     x = 0
     y = 0
@@ -274,8 +278,7 @@ def genParkplaetze(j):
     for i in range(Parkplatzanzahl):
         Px = pygame.draw.rect(screen, white, (
             x_Parkplatz1 + (breite_Parkplatz + 3) * x, y_Parkplatz1 - y, breite_Parkplatz, hohe_Parkplatz), 2)
-        if j == 0:
-            Parkplatz_list.append(Px)
+        Parkplatz_list.append(Px)
         x += 1
         z += 1
         if x == maxplaetze_pro_reihe:
@@ -284,21 +287,19 @@ def genParkplaetze(j):
             y *= -1
         if z == 20 or z == 60:
             y += breite_Straße + hohe_Parkplatz
-    if j == 0:
-        for i in range(Parkplatzanzahl_extra):
-            Pex = Parkplatz_list[-1]
-            Parkplatz_list_extra.append(Pex)
-            Parkplatz_list.remove(Pex)
-        #print(Parkplatz_list_extra, Parkplatzanzahl_extra, len(Parkplatz_list_extra), Parkplatzanzahl, len(Parkplatz_list))
-def genbackground(i):
+    for i in range(Parkplatzanzahl_extra):
+        Pex = Parkplatz_list[-1]
+        Parkplatz_list_extra.append(Pex)
+        Parkplatz_list.remove(Pex)
+def genbackground():
     genscreen()
     genrand()
-    genParkplaetze(i)
+    genParkplaetze()
     datum()
 
 # main-loop
 park_running = True
-genbackground(0)
+genbackground()
 pygame.display.flip()
 while park_running == True: #parkloop
     now = time.time()
@@ -316,14 +317,13 @@ while park_running == True: #parkloop
             car.carpos, car.image = parkcar(car)
     pygame.display.update()
     for i in carsinlot: #welche Autos parken aktuell
-        #print(i.cartimer, i.lotnumber, i.carpos, i.image, i.extra)
+        print(i.cartimer, i.lotnumber, i.carpos, i.image, i.extra)
         screen.blit(i.image, i.carpos)
-        if now > (i.entrietime + i.cartimer/zeittraffer): #fährt ein Auto raus
+        if now > i.exittime/zeittraffer: #fährt ein Auto raus
             i.carpos, i.image = getcarout(i)
             revenue = pay(i, revenue)
             deletecar(i)
     if now == 24 * hins * zeittraffer: #alle Autos müssen raus fahren
-        print('Das Parkhaus schliest')
         for i in carsinlot:
             i.carpos, i.image = getcarout(i)
             revenue = pay(i, revenue)

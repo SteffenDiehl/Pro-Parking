@@ -117,11 +117,12 @@ x_eingrenzung_links = 100
 
 date = str(date.today())
 def datum(msg='Datum: '+ date):
-    my_font = pygame.font.Font(None, 40)
+    my_font = pygame.font.Font(None, 35)
     text_surface = my_font.render(msg, True, White)
     text_rect = text_surface.get_rect()
     text_rect.center = (1130, 250 )
     screen.blit(text_surface, text_rect)
+
 
 time = str(datetime.time())
 def uhrzeit(msg='Uhrzeit: ' + time + ' Uhr'):

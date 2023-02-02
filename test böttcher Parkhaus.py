@@ -13,9 +13,8 @@ black = (0, 0, 0)
 grey = (127, 127, 127)
 white = (255, 255, 255)
 P = 100  # Parkplatzanzahl
-breite_screen = 1400
-hohe_screen = 750
-
+breite_screen = 1250
+hohe_screen = 530
 
 pygame.init()
 screen = pygame.display.set_mode((breite_screen, hohe_screen))
@@ -35,7 +34,7 @@ hohe_zurückfenster = 130
 # Koordinaten Rand Links
 x_Rand1 = 0
 y_Rand1 = 0
-breite_Rand1 = 100
+breite_Rand1 = 40
 hohe_Rand1 = 300
 x_Rand2 = 0
 y_Rand2 = 350
@@ -45,9 +44,9 @@ hohe_Rand2 = 250
 # Parkplatz maße
 hohe_Parkplatz = 60
 breite_Parkplatz = 40
-breite_Straße = 80
+breite_Straße = 50
 x_Parkplatz1 = breite_Straße + breite_Rand1
-y_Parkplatz1 = 350
+y_Parkplatz1 = 240
 
 # variable auto
 carspawntime = random.randint(3, 5)
@@ -271,7 +270,7 @@ def datum(msg='Datum: ' + date):
     text_rect.center = (1125, 15)
     screen.blit(text_surface, text_rect)
 
-Behindertenparkplatze = 10
+Behindertenparkplatze = 20
 Parkplatze = 100
 
 
@@ -298,25 +297,25 @@ def genParkplaetze():
     image = image.convert()
     image = pygame.transform.scale(image, (30, 45))
 
-    if Behindertenparkplatze >= 2 and Parkplatze >= 2:
-        for p in range (2):
-            screen.blit(image, (p*43+95,380))
+    if Behindertenparkplatze >= 4 and Parkplatze >= 20:
+        for p in range (4):
+            screen.blit(image, (p*43+(16*breite_Parkplatz+143),247))
 
-    if Behindertenparkplatze >= 4 and Parkplatze >= 22 :
-        for p in range (2):
-            screen.blit(image,(p*43+95,247-breite_Straße-hohe_Parkplatz))
+    if Behindertenparkplatze >= 8 and Parkplatze >= 40 :
+        for p in range (4):
+            screen.blit(image,(p*43+(16*breite_Parkplatz+143),247-breite_Straße-hohe_Parkplatz))
 
-    if Behindertenparkplatze >= 6 and Parkplatze >= 42:
-        for p in range (2):
-            screen.blit(image,(p*43+95,247+breite_Straße+hohe_Parkplatz))
+    if Behindertenparkplatze >= 12 and Parkplatze >= 60:
+        for p in range (4):
+            screen.blit(image,(p*43+(16*breite_Parkplatz+143),247+breite_Straße+hohe_Parkplatz))
 
-    if Behindertenparkplatze >= 8 and Parkplatze >= 62:
-        for p in range (2):
-            screen.blit(image,(p*43+95,247-(2*breite_Straße)-(2*hohe_Parkplatz)))
+    if Behindertenparkplatze >= 16 and Parkplatze >= 80:
+        for p in range (4):
+            screen.blit(image,(p*43+(16*breite_Parkplatz+143),247-(2*breite_Straße)-(2*hohe_Parkplatz)))
 
-    if Behindertenparkplatze >= 10 and Parkplatze >= 82:
-        for p in range (2):
-            screen.blit(image,(p*43+95,247+(2*breite_Straße)+(2*hohe_Parkplatz)))
+    if Behindertenparkplatze >= 20 and Parkplatze >= 100:
+        for p in range (4):
+            screen.blit(image,(p*43+(16*breite_Parkplatz+143),247+(2*breite_Straße)+(2*hohe_Parkplatz)))
 
 
 
@@ -365,21 +364,3 @@ while running == True:
         if event.type == QUIT:
             running = False
     pygame.display.update()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
