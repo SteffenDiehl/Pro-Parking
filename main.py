@@ -124,7 +124,7 @@ x_Parkplatz1 = breite_Straße + breite_Rand1
 y_Parkplatz1 = 240
 
 # variable auto
-extras = ['family', 'handycaped']
+extras = ['handycaped', 'family']
 carsize = (60, 30)
 lcarsize, bcarsize = carsize
 autobilder = ['whitecar.jpg', 'redcar.png'] #die Bilder müssen ein Seitenverhältnis von 2,25 haben
@@ -301,11 +301,11 @@ def uhrzeit(msg='Uhrzeit: ' + nur_zeit + ' Uhr'):
     text_rect = text_surface.get_rect()
     text_rect.center = (1160, 300)
     screen.blit(text_surface, text_rect)
-def datum(msg='Datum: '+ date):
+def datum(x, y, msg='Datum: '+ date):
     my_font = pygame.font.Font(None, 40)
     text_surface = my_font.render(msg, True, White)
     text_rect = text_surface.get_rect()
-    text_rect.center = (1250, 40 )
+    text_rect.center = (x, y)
     screen.blit(text_surface, text_rect)
 def variable_in_zeit_konvertieren(number):
     hour = int(number)
@@ -580,7 +580,7 @@ def settings():
             pygame.draw.rect(screen, BLACK, box_date_time)
 
             # Anzeige von Datum und Uhrzeit
-            datum()
+            datum(1160, 250)
             uhrzeit()
 
             #Hier werden die Boxen um die Einstellungen gebaut
@@ -845,11 +845,11 @@ def spawncar(): #erstelle ein Auto
     carsinlot.append(car)
     return
 def situation():
-    x = random.randint(0, 20)  # je 10% chance auf Anspruch für Familien- oder Behindertenparkplatz
-    if x == 0 or x == 1:
+    x = random.randint(0, 20)  # 5% chance auf Anspruch für Behindertenparkplatz #Familienparkplatz
+    if x == 0: #or x == 1
         extra = extras[x]
     else:
-        extra = 'none'
+        extra = None
     return extra
 def howtodrive(get_car): #stelle fest wo dein Parkplatz liegt und wie du zu parken hast
     global meinestrase, parkrichtung
@@ -1012,7 +1012,7 @@ def genbackground(j):
     screen.fill(GRAY)
     genrand()
     genParkplaetze(j)
-    datum()
+    datum(1250, 40 )
 def parkhaus_oberflaeche():
     global Parkplatz_list_extra_vorhanden, Parkplatz_list_vorhanden, belegt, belegt_extra, carsinlot, Parkplatz_list, Parkplatz_list_extra
     runningspiel = True
