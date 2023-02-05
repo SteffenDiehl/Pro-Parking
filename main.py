@@ -60,11 +60,11 @@ höhe_zurück = 50
 breite_zurück = 80
 
 #startvariablen
-variable_für_anzahl_der_parkplätze = 10
-variable_für_anzahl_der_behinderten_parkplätze = 0
-variable_für_kosten = 0
-variable_öffnungszeit = 00.00
-variable_schließzeit = 01.00
+variable_für_anzahl_der_parkplätze = 30
+variable_für_anzahl_der_behinderten_parkplätze = 2
+variable_für_kosten = 2
+variable_öffnungszeit = 08.00
+variable_schließzeit = 09.00
 
 #höchste Anzahl der Variablen
 höchste_anzahl_parkplätze = 120
@@ -82,19 +82,19 @@ abstand_der_taster_x = 230
 abstand_der_taster_y = 100
 abstand_zw_zwei_plus_minus = 450
 
-# Koordinaten Anzeigefenster
+#Koordinaten Anzeigefenster
 x_anzeigefenster = 1100
 y_anzeigefenster = 0
 breite_anzeigefenster = 300
 hohe_anzeigefenster = 410
 
-# Koordinaten Zurückfenster
+#Koordinaten Zurückfenster
 x_zurückfenster = 1100
 y_zurückfenster = 470
 breite_zurückfenster = 300
 hohe_zurückfenster = 400
 
-# Koordinaten Rand Links
+#Koordinaten Rand Links
 x_Rand1 = 0
 y_Rand1 = 0
 breite_Rand1 = 100
@@ -104,7 +104,7 @@ y_Rand2 = 350
 breite_Rand2 = 100
 hohe_Rand2 = 400
 
-# Koordinaten Rand oben
+#Koordinaten Rand oben
 x_Rand_oben = 30
 y_Rand_oben = 0
 hohe_Rand_oben = 20
@@ -116,30 +116,34 @@ y_Rand_unten = 630
 hohe_Rand_unten = 130
 breite_Rand_unten = 1350
 
-# Parkplatz maße
+#Parkplatz maße
 hohe_Parkplatz = 60
 breite_Parkplatz = 40
 breite_Straße = 50
 x_Parkplatz1 = breite_Straße + breite_Rand1
 y_Parkplatz1 = 240
 
-# variable auto
+#Variable Auto
 extras = ['handycaped', 'family']
 carsize = (60, 30)
 lcarsize, bcarsize = carsize
 autobilder = ['whitecar.jpg', 'redcar.png'] #die Bilder müssen ein Seitenverhältnis von 2,25 haben
 carcolours = []
 
-# variable parkdauer
-zeittraffer = 120
+#Variable Parkdauer
+zeittraffer = 120 #Standard Zeittraffer
+minZeittraffer = 60
+maxZeittraffer = 240
 hins = 3600  # StundeinSekunde(3600)
-minparkdauer = hins/4 # 15 min in s
-maxparkdauer = 4 * hins # 12h in s
+minparkdauer = hins/4 #15 min in s
+maxparkdauer = 12 * hins #12h in s
+#variablen Einnahmen
+revenue = 0
 #variable spawntime
-minspawntime = 1*hins/60 # min 1 min zwischen spawns
-maxspawntime = 15*(hins/60) # max 15 min zwischen spawns
+minspawntime = 1*hins/60 #mindestens 1 min zwischen spawns
+maxspawntime = 15*(hins/60) #maximal 15 min zwischen spawns
 
-# variable parken
+#Variablen parken
 maxplaetze_pro_reihe = 20
 einfahrtslaenge = breite_Rand1
 xeinfahrt = 0
@@ -154,7 +158,7 @@ Parkplatz_list_vorhanden = []
 belegt = []
 belegt_extra = []
 
-# lade autobilder
+#lade autobilder
 for i in autobilder:
     carpic = pygame.image.load(i)
     carpic = pygame.transform.scale(carpic, carsize)
@@ -371,6 +375,91 @@ def plus_schließzeit(msg='+'):
     text_rect = text_surface.get_rect()
     text_rect.center = (x_taster_minus + abstand_der_taster_x + abstand_zw_zwei_plus_minus + breite_taster_plus_minus/2, y_taster_plus_minus + abstand_der_taster_y*3+ höhe_taster_plus_minus/2 )
     screen.blit(text_surface, text_rect)
+def aktuelle_variablen_im_Fenster():
+    # variablen
+    global variable_für_anzahl_der_parkplätze
+    global variable_für_anzahl_der_behinderten_parkplätze
+    global variable_für_kosten
+    global variable_öffnungszeit
+    global variable_schließzeit
+    global revenue
+
+
+    #Fenster
+    Anzeige = pygame.Rect(BREITE-290, y_zurück +85, 280, 300)
+    pygame.draw.rect(screen, White, Anzeige, 0)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render('Preis je Stunde:', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1175, 120)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render(str(variable_für_kosten) + ' $', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1360, 120)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render('Einnahmen: ', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1165, 170)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render(str(revenue) + ' $', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1360, 170)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render('Anzahl Parkplätze: ', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1188, 220)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render(str(variable_für_anzahl_der_parkplätze), True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1360, 220)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render('Anzahl Behindertenparkplätze:', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1230, 270)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render(str(variable_für_anzahl_der_behinderten_parkplätze), True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1360, 270)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render('Anzahl freie Parkplätze: ', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1205, 320)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render(str(variable_für_anzahl_der_parkplätze-(len(belegt_extra)+len(belegt))), True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1360, 320)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render('Anzahl belegte Parkplätze: ', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1215, 370)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render(str(len(belegt_extra)+len(belegt)), True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1360, 370)
+    screen.blit(text_surface, text_rect)
 def oberflaeche_menue():
     global farbe
     x_button = 450
@@ -514,8 +603,6 @@ def Info():
             if event.type == pygame.QUIT:
                 runningsinfo = False
                 quit()
-
-
         pygame.display.update()
 def settings():
     runningsetting = True
@@ -932,15 +1019,15 @@ def pay(car, oldrevenue): #leider musst auch du zahlen
     if hours < car.cartimer / hins:
         hours += 1 #angefangene Stunden müssen voll gezahlt werden
     amounttopay = hours * variable_für_kosten
-    print(f'Sie müssen: {amounttopay} Euro bezahlen')
+    print(f'Sie müssen: {amounttopay} $ bezahlen')
     newrevenue = oldrevenue + amounttopay #wie viel wurde bisher verdient
-    print(f'Ihre Einnahmen sind: {newrevenue} Euro')
+    print(f'Ihre Einnahmen sind: {newrevenue} $')
     return newrevenue
 def deletecar(car): #entferne das Auto aus dem Parkplatz
     if car.lotnumber in belegt:
-        belegt.remove(car.lotnumber)
+        belegt.remove(car.lotnumber) #gib den Parkplatz für andere wieder frei
     elif car.lotnumber in belegt_extra:
-        belegt_extra.remove(car.lotnumber)
+        belegt_extra.remove(car.lotnumber) #gib den Behindertenparkplatz wieder frei
     carsinlot.remove(car)
 def genrand():
     pygame.draw.rect(screen, farbe, (x_anzeigefenster, y_anzeigefenster, breite_anzeigefenster, hohe_anzeigefenster))  # Rand rechts oben
@@ -949,6 +1036,31 @@ def genrand():
     pygame.draw.rect(screen, farbe, (x_zurückfenster, y_zurückfenster, breite_zurückfenster, hohe_zurückfenster))  # Rand rechts unten
     pygame.draw.rect(screen, farbe, (x_Rand_oben,y_Rand_oben,breite_Rand_oben,hohe_Rand_oben)) # Rand oben
     pygame.draw.rect(screen, farbe, (x_Rand_unten,y_Rand_unten, breite_Rand_unten, hohe_Rand_unten))
+def ampel():
+    for x in range (2):
+        pygame.draw.rect(screen,weiß,(x*20+60,280,20,20),2)
+def set_Zeittraffer():
+    global zeittraffer
+    #Fenster
+    Anzeige = pygame.Rect(BREITE-290, 485, 280, 130)
+    pygame.draw.rect(screen, White, Anzeige, 0)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render('Zeittraffer:', True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1175, 520)
+    screen.blit(text_surface, text_rect)
+
+    my_font = pygame.font.Font(None, 22)
+    text_surface = my_font.render(str(zeittraffer), True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (1365, 520)
+    screen.blit(text_surface, text_rect)
+
+    plus_Zeittraffer = pygame.Rect(1300, 545, 75, 30)
+    pygame.draw.rect(screen, GRUEN, plus_Zeittraffer, 0)
+    minus_Zeittraffer = pygame.Rect(1140, 545, 75, 30)
+    pygame.draw.rect(screen, RED, minus_Zeittraffer, 0)
 def genParkplaetze(j):
     x = 0
     y = 0
@@ -1013,17 +1125,17 @@ def genbackground(j):
     genrand()
     genParkplaetze(j)
     datum(1250, 40 )
+    aktuelle_variablen_im_Fenster()
+    set_Zeittraffer()
 def parkhaus_oberflaeche():
-    global Parkplatz_list_extra_vorhanden, Parkplatz_list_vorhanden, belegt, belegt_extra, carsinlot, Parkplatz_list, Parkplatz_list_extra
+    global Parkplatz_list_extra_vorhanden, Parkplatz_list_vorhanden, belegt, belegt_extra, carsinlot, Parkplatz_list, Parkplatz_list_extra, revenue, zeittraffer
     runningspiel = True
     offen = True
-    # variablen auto
+    #alle Variablen werden zurück gesetzt
+    #Variablen auto
     carsinlot = []
     starttime = time.time()
-    carcounter = 0
-    # variablen einnahmen
-    revenue = 0
-    #variablen parken
+    #Variablen parken
     belegt = []
     belegt_extra = []
     Parkplatz_list = []
@@ -1033,26 +1145,25 @@ def parkhaus_oberflaeche():
     Parkplatz_list_vorhanden = []
     carsinlot = []
     screen.fill(farbe)
-    genbackground(0)
+    genbackground(0) #hintergrund wird generiert und die Parkplatzlisten werden erstellt
     for i in range(variable_für_anzahl_der_parkplätze):
         Parkplatz_list_vorhanden.append(i+1)
     reihen_behindert = variable_für_anzahl_der_behinderten_parkplätze//2
-    for i in range(reihen_behindert):
+    for i in range(reihen_behindert): #den Behindertenparkplätzen wird eine Platznummer zu gewiesen
         Platz = 1
         Platz += 20*i
         for i in range(2):
             Platz += i
             Parkplatz_list_extra_vorhanden.append(Platz)
             Parkplatz_list_vorhanden.remove(Platz)
-    carspawntime = (random.randint(minspawntime, maxspawntime)) / zeittraffer
+    carspawntime = (random.randint(minspawntime, maxspawntime)) / zeittraffer #zufällige Zeit, wann das nächste Auto erscheint
     timestartsim = time.time()
-    timeuntilclosing = variable_schließzeit - variable_öffnungszeit
+    timeuntilclosing = variable_schließzeit - variable_öffnungszeit #wie lange dauert es bis das Parkhaus schließt
     while runningspiel:
         genbackground(1)
         zurück = pygame.Rect(x_zurück, y_zurück, breite_zurück, höhe_zurück)
         pygame.draw.rect(screen, RED, zurück, 0)
         zurück_in_box()
-
         (x, y) = pygame.mouse.get_pos()
 
         if x > x_zurück and x < x_zurück + breite_zurück and y > y_zurück and y < y_zurück + höhe_zurück:
@@ -1062,16 +1173,28 @@ def parkhaus_oberflaeche():
                 if event.button == 1:
                     runningspiel = False
                     oberflaeche_menue()
-        now = time.time()
+        if x > 1300 and x < 1300 + 75 and y > 545 and y < 545 + 30: #Zeittraffer Plus-Taste
+            plus_Zeittraffer = pygame.Rect(1300, 545, 75, 30)
+            pygame.draw.rect(screen, BLACK, plus_Zeittraffer, 4)
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1 and zeittraffer < maxZeittraffer:
+                    zeittraffer += 10
+        if x > 1140 and x < 1140 + 75 and y > 545 and y < 545 + 30: #Zeittraffer Minus-Taste
+            minus_Zeittraffer = pygame.Rect(1140, 545, 75, 30)
+            pygame.draw.rect(screen, BLACK, minus_Zeittraffer, 4)
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1 and zeittraffer > minZeittraffer:
+                    zeittraffer -= 10
+
+        now = time.time() #die aktuelle Uhrzeit in Sekunden
         secounds = now - starttime
         if offen == True:
             if len(carsinlot) < variable_für_anzahl_der_parkplätze:#if now != variable_schließzeit and len(carsinlot) < variable_für_anzahl_der_parkplätze:
                 nochParkplaetze_frei = True
-                if secounds > carspawntime:  # steht ein Auto vor dem Parkhaus
+                if secounds > carspawntime:  #steht ein Auto vor dem Parkhaus
                     carspawntime = (random.randint(minspawntime, maxspawntime)) / zeittraffer
                     starttime = time.time()
                     spawncar()
-                    carcounter += 1
                     car = carsinlot[-1]
                     car.carpos, car.image = parkcar(car)
             else:  # können noch Autos in das Parkhaus fahren
@@ -1080,11 +1203,11 @@ def parkhaus_oberflaeche():
                 time.sleep(0.1)
             for i in carsinlot:  # welche Autos parken aktuell
                 screen.blit(i.image, i.carpos)
-                if now > (i.entrietime + i.cartimer / zeittraffer):  # fährt ein Auto raus
+                if now > (i.entrietime + i.cartimer / zeittraffer):  #fährt ein Auto raus
                     i.carpos, i.image = getcarout(i)
                     revenue = pay(i, revenue)
                     deletecar(i)
-            if now > (timestartsim + (timeuntilclosing * hins) / zeittraffer):  # alle Autos müssen raus fahren
+            if now > (timestartsim + (timeuntilclosing * hins) / zeittraffer):  #alle Autos müssen raus fahren
                 print('Das Parkhaus schliest!')
                 for i in carsinlot:
                     i.carpos, i.image = getcarout(i)
@@ -1092,13 +1215,23 @@ def parkhaus_oberflaeche():
                     deletecar(i)
                 closetime = time.time()
                 offen = False
-        if offen == False and now > (closetime + (1 * hins) / zeittraffer): # das Parkhaus ist für 1 Stunde geschlossen
+        if offen == False and now > (closetime + (2 * hins) / zeittraffer): #das Parkhaus ist für 2 Stunde geschlossen
             print('Das Parkhaus öffnet!')
             offen = True
             timestartsim = time.time()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 runningspiel = False
+        # Maus
+        pygame.draw.rect(screen, White, (x - 5, y - 5, 10, 10,), 0)
+
+        #Ampel
+        for x in range(2):
+            pygame.draw.rect(screen, weiß, (x * 20 + 60, 280, 20, 20), 2) #Ampelgehäuse
+        if nochParkplaetze_frei == False or offen == False:
+            pygame.draw.circle(screen, RED, (70,290 ), 5) #Ampel rot
+        if nochParkplaetze_frei == True or offen == True:
+            pygame.draw.circle(screen, GRUEN, (90,290),5) #Ampel grün
         pygame.display.update()
 
 oberflaeche_menue()
