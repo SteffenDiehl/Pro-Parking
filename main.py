@@ -1016,6 +1016,7 @@ def genbackground(j):
 def parkhaus_oberflaeche():
     global Parkplatz_list_extra_vorhanden, Parkplatz_list_vorhanden, belegt, belegt_extra, carsinlot, Parkplatz_list, Parkplatz_list_extra
     runningspiel = True
+    offen = True
     # variablen auto
     carsinlot = []
     starttime = time.time()
@@ -1044,6 +1045,10 @@ def parkhaus_oberflaeche():
             Parkplatz_list_extra_vorhanden.append(Platz)
             Parkplatz_list_vorhanden.remove(Platz)
     carspawntime = (random.randint(minspawntime, maxspawntime)) / zeittraffer
+    timestartsim = time.time()
+    timeuntilclosing = variable_schließzeit - variable_öffnungszeit
+    print(variable_öffnungszeit, variable_schließzeit, timeuntilclosing)
+    print(time.time(), (timestartsim + (timeuntilclosing * hins) / zeittraffer))
     while runningspiel:
         genbackground(1)
         zurück = pygame.Rect(x_zurück, y_zurück, breite_zurück, höhe_zurück)
@@ -1061,31 +1066,38 @@ def parkhaus_oberflaeche():
                     oberflaeche_menue()
         now = time.time()
         secounds = now - starttime
-        if len(carsinlot) < variable_für_anzahl_der_parkplätze:#if now != variable_schließzeit and len(carsinlot) < variable_für_anzahl_der_parkplätze:
-            nochParkplaetze_frei = True
-            if secounds > carspawntime:  # steht ein Auto vor dem Parkhaus
-                carspawntime = (random.randint(minspawntime, maxspawntime)) / zeittraffer
-                starttime = time.time()
-                spawncar()
-                carcounter += 1
-                car = carsinlot[-1]
-                car.carpos, car.image = parkcar(car)
-        else:  # können noch Autos in das Parkhaus fahren
-            nochParkplaetze_frei = False
-            print('Das Parkhaus ist voll!')
-            time.sleep(0.1)
-        for i in carsinlot:  # welche Autos parken aktuell
-            screen.blit(i.image, i.carpos)
-            if now > (i.entrietime + i.cartimer / zeittraffer):  # fährt ein Auto raus
-                i.carpos, i.image = getcarout(i)
-                revenue = pay(i, revenue)
-                deletecar(i)
-        if now == (variable_schließzeit * hins) / zeittraffer:  # alle Autos müssen raus fahren
-            print('Das Parkhaus schliest!')
-            for i in carsinlot:
-                i.carpos, i.image = getcarout(i)
-                revenue = pay(i, revenue)
-                deletecar(i)
+        if offen == True:
+            if len(carsinlot) < variable_für_anzahl_der_parkplätze:#if now != variable_schließzeit and len(carsinlot) < variable_für_anzahl_der_parkplätze:
+                nochParkplaetze_frei = True
+                if secounds > carspawntime:  # steht ein Auto vor dem Parkhaus
+                    carspawntime = (random.randint(minspawntime, maxspawntime)) / zeittraffer
+                    starttime = time.time()
+                    spawncar()
+                    carcounter += 1
+                    car = carsinlot[-1]
+                    car.carpos, car.image = parkcar(car)
+            else:  # können noch Autos in das Parkhaus fahren
+                nochParkplaetze_frei = False
+                print('Das Parkhaus ist voll!')
+                time.sleep(0.1)
+            for i in carsinlot:  # welche Autos parken aktuell
+                screen.blit(i.image, i.carpos)
+                if now > (i.entrietime + i.cartimer / zeittraffer):  # fährt ein Auto raus
+                    i.carpos, i.image = getcarout(i)
+                    revenue = pay(i, revenue)
+                    deletecar(i)
+            if now > (timestartsim + (timeuntilclosing * hins) / zeittraffer):  # alle Autos müssen raus fahren
+                print('Das Parkhaus schliest!')
+                for i in carsinlot:
+                    i.carpos, i.image = getcarout(i)
+                    revenue = pay(i, revenue)
+                    deletecar(i)
+                    closetime = time.time()
+                offen = False
+        if offen == False and now > (closetime + (1 * hins) / zeittraffer): # das Parkhaus ist für 1 Stunde geschlossen
+            print('Das Parkhaus öffnet')
+            offen = True
+            timestartsim = time.time()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 runningspiel = False
