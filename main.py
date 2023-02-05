@@ -1179,12 +1179,14 @@ def parkhaus_oberflaeche():
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1 and zeittraffer < maxZeittraffer:
                     zeittraffer += 10
+                    time.sleep(0.1)
         if x > 1140 and x < 1140 + 75 and y > 545 and y < 545 + 30: #Zeittraffer Minus-Taste
             minus_Zeittraffer = pygame.Rect(1140, 545, 75, 30)
             pygame.draw.rect(screen, BLACK, minus_Zeittraffer, 4)
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1 and zeittraffer > minZeittraffer:
                     zeittraffer -= 10
+                    time.sleep(0.1)
 
         now = time.time() #die aktuelle Uhrzeit in Sekunden
         secounds = now - starttime
