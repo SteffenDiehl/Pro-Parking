@@ -1160,7 +1160,6 @@ def parkhaus_oberflaeche():
     timestartsim = time.time()
     timeuntilclosing = variable_schließzeit - variable_öffnungszeit #wie lange dauert es bis das Parkhaus schließt
     while runningspiel:
-        genbackground(1)
         zurück = pygame.Rect(x_zurück, y_zurück, breite_zurück, höhe_zurück)
         pygame.draw.rect(screen, RED, zurück, 0)
         zurück_in_box()
@@ -1197,6 +1196,7 @@ def parkhaus_oberflaeche():
                     spawncar()
                     car = carsinlot[-1]
                     car.carpos, car.image = parkcar(car)
+                    genbackground(1)
             else:  # können noch Autos in das Parkhaus fahren
                 nochParkplaetze_frei = False
                 print('Das Parkhaus ist voll!')
@@ -1207,12 +1207,14 @@ def parkhaus_oberflaeche():
                     i.carpos, i.image = getcarout(i)
                     revenue = pay(i, revenue)
                     deletecar(i)
+                    genbackground(1)
             if now > (timestartsim + (timeuntilclosing * hins) / zeittraffer):  #alle Autos müssen raus fahren
                 print('Das Parkhaus schliest!')
                 for i in carsinlot:
                     i.carpos, i.image = getcarout(i)
                     revenue = pay(i, revenue)
                     deletecar(i)
+                    genbackground(1)
                 closetime = time.time()
                 offen = False
         if offen == False and now > (closetime + (2 * hins) / zeittraffer): #das Parkhaus ist für 2 Stunde geschlossen
