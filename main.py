@@ -1224,8 +1224,6 @@ def parkhaus_oberflaeche():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 runningspiel = False
-        # Maus
-        pygame.draw.rect(screen, White, (x - 5, y - 5, 10, 10,), 0)
 
         #Ampel
         for x in range(2):
