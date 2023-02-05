@@ -1047,8 +1047,6 @@ def parkhaus_oberflaeche():
     carspawntime = (random.randint(minspawntime, maxspawntime)) / zeittraffer
     timestartsim = time.time()
     timeuntilclosing = variable_schließzeit - variable_öffnungszeit
-    print(variable_öffnungszeit, variable_schließzeit, timeuntilclosing)
-    print(time.time(), (timestartsim + (timeuntilclosing * hins) / zeittraffer))
     while runningspiel:
         genbackground(1)
         zurück = pygame.Rect(x_zurück, y_zurück, breite_zurück, höhe_zurück)
@@ -1092,10 +1090,10 @@ def parkhaus_oberflaeche():
                     i.carpos, i.image = getcarout(i)
                     revenue = pay(i, revenue)
                     deletecar(i)
-                    closetime = time.time()
+                closetime = time.time()
                 offen = False
         if offen == False and now > (closetime + (1 * hins) / zeittraffer): # das Parkhaus ist für 1 Stunde geschlossen
-            print('Das Parkhaus öffnet')
+            print('Das Parkhaus öffnet!')
             offen = True
             timestartsim = time.time()
         for event in pygame.event.get():
