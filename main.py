@@ -1230,7 +1230,7 @@ def parkhaus_oberflaeche():
             pygame.draw.rect(screen, weiß, (x * 20 + 60, 280, 20, 20), 2) #Ampelgehäuse
         if nochParkplaetze_frei == False or offen == False:
             pygame.draw.circle(screen, RED, (70,290 ), 5) #Ampel rot
-        if nochParkplaetze_frei == True or offen == True:
+        if nochParkplaetze_frei == True or offen == False:
             pygame.draw.circle(screen, GRUEN, (90,290),5) #Ampel grün
         pygame.display.update()
 
